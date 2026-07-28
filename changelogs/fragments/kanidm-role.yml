@@ -7,4 +7,5 @@ breaking_changes:
     If breaking database migrations are detected, the role fails with instructions to resolve manually.
 
 bugfixes:
+  - Fix pre-upgrade check to use the correct 'kanidmd domain upgrade-check' command per official documentation.
   - Skip service restart when binary version is unchanged to prevent unnecessary downtime on repeated runs.
