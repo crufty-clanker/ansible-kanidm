@@ -1,0 +1,16 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - prerequisites
+
+- name: "Install required packages"
+  ansible.builtin.package:
+    name:
+      - ca-certificates
+      - curl
+      - libsqlite3-dev
+    state: present
+
+- name: "Ensure certbot is installed when enabled"
+  ansible.builtin.package:
+    name: certbot
+    state: present
+  when: kanidm_certbot_enabled | bool

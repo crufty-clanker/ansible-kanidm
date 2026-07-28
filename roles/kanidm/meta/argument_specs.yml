@@ -1,0 +1,105 @@
+---
+argument_specs:
+  main:
+    short_description: Install and configure Kanidm identity server
+    description:
+      - Installs Kanidm server
+      - Configures listening address and domain
+      - Manages TLS certificates via certbot or manual configuration
+      - Sets up systemd service
+    version_added: "0.1.0"
+    options:
+      kanidm_version:
+        description: Version of Kanidm to install
+        type: str
+        default: "1.3.3"
+      kanidm_arch:
+        description: Architecture for the Kanidm binary
+        type: str
+        default: "{{ ansible_architecture | default('x86_64') }}"
+      kanidm_install_dir:
+        description: Directory where Kanidm binary is installed
+        type: str
+        default: "/usr/local/bin"
+      kanidm_service_user:
+        description: System user running Kanidm
+        type: str
+        default: "kanidm"
+      kanidm_service_group:
+        description: System group running Kanidm
+        type: str
+        default: "kanidm"
+      kanidm_listen_address:
+        description: Address and port to listen on
+        type: str
+        default: "0.0.0.0:8443"
+      kanidm_domain:
+        description: Domain name for the Kanidm server
+        type: str
+        default: "idm.example.com"
+      kanidm_data_dir:
+        description: Directory for Kanidm data storage
+        type: str
+        default: "/var/lib/kanidm"
+      kanidm_log_level:
+        description: Log level for Kanidm
+        type: str
+        choices:
+          - trace
+          - debug
+          - info
+          - warn
+          - error
+        default: "info"
+      kanidm_admin_email:
+        description: Admin email for domain configuration
+        type: str
+        default: "admin@example.com"
+      kanidm_certbot_enabled:
+        description: Enable automatic TLS certificate management via certbot
+        type: bool
+        default: false
+      kanidm_certbot_email:
+        description: Email for certbot account registration
+        type: str
+        default: "admin@example.com"
+      kanidm_certbot_ca_server:
+        description: ACME CA server URL for certbot
+        type: str
+        default: "https://acme-v02.api.letsencrypt.org/directory"
+      kanidm_certificate_dir:
+        description: Directory for storing TLS certificates
+        type: str
+        default: "/etc/kanidm/certs"
+      kanidm_tls_cert_file:
+        description: Path to TLS certificate file (used when certbot is disabled)
+        type: str
+        default: ""
+      kanidm_tls_key_file:
+        description: Path to TLS key file (used when certbot is disabled)
+        type: str
+        default: ""
+      kanidm_http_port:
+        description: HTTP port for certbot HTTP-01 challenge
+        type: int
+        default: 80
+      kanidm_database_path:
+        description: Path to the Kanidm database file
+        type: str
+        default: "/var/lib/kanidm/kanidm.db"
+      kanidm_service_name:
+        description: Name of the systemd service
+        type: str
+        default: "kanidm"
+      kanidm_service_state:
+        description: Desired state of the service
+        type: str
+        choices:
+          - started
+          - stopped
+          - restarted
+        default: "started"
+      kanidm_service_enabled:
+        description: Enable service on boot
+        type: bool
+        default: true

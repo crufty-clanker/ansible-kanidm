@@ -1,0 +1,57 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - certificate management
+
+- name: "Ensure HTTP port is available for certbot challenge"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - nginx
+    - apache2
+  when: kanidm_http_port == 80
+  ignore_errors: true
+
+- name: "Issue certificate with certbot"
+  ansible.builtin.command:
+    cmd: >-
+      certbot certonly
+      --email {{ kanidm_certbot_email }}
+      --non-interactive
+      --agree-tos
+      --webroot
+      --webroot-path /var/www/certbot
+      --ca-server {{ kanidm_certbot_ca_server }}
+      -d {{ kanidm_domain }}
+  register: _kanidm_certbot_result
+  changed_when: _kanidm_certbot_result.rc == 0
+  failed_when: _kanidm_certbot_result.rc != 0
+
+- name: "Set certificate file paths"
+  ansible.builtin.set_fact:
+    kanidm_tls_cert_file: "/etc/letsencrypt/live/{{ kanidm_domain }}/fullchain.pem"
+    kanidm_tls_key_file: "/etc/letsencrypt/live/{{ kanidm_domain }}/privkey.pem"
+
+- name: "Ensure certificate files exist"
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ kanidm_tls_cert_file }}"
+    - "{{ kanidm_tls_key_file }}"
+  register: _kanidm_cert_files
+
+- name: "Fail when certificate files are missing"
+  ansible.builtin.assert:
+    that: item.stat.exists
+    fail_msg: "Certificate file {{ item.path }} not found"
+  loop: "{{ _kanidm_cert_files.results }}"
+
+- name: "Set certificate file permissions"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ kanidm_service_user }}"
+    group: "{{ kanidm_service_group }}"
+    mode: "0640"
+  loop:
+    - "{{ kanidm_tls_cert_file }}"
+    - "{{ kanidm_tls_key_file }}"

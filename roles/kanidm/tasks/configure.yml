@@ -1,0 +1,42 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - configuration
+
+- name: "Create Kanidm data directory"
+  ansible.builtin.file:
+    path: "{{ kanidm_data_dir }}"
+    state: directory
+    owner: "{{ kanidm_service_user }}"
+    group: "{{ kanidm_service_group }}"
+    mode: "0700"
+
+- name: "Create configuration directory"
+  ansible.builtin.file:
+    path: /etc/kanidm
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "Create certificates directory"
+  ansible.builtin.file:
+    path: "{{ kanidm_certificate_dir }}"
+    state: directory
+    owner: "{{ kanidm_service_user }}"
+    group: "{{ kanidm_service_group }}"
+    mode: "0700"
+
+- name: "Generate Kanidm configuration file"
+  ansible.builtin.template:
+    src: kanidm.toml.j2
+    dest: /etc/kanidm/kanidm.toml
+    owner: root
+    group: root
+    mode: "0640"
+  notify: "Restart kanidm service"
+
+- name: "Set configuration file ownership"
+  ansible.builtin.file:
+    path: /etc/kanidm/kanidm.toml
+    owner: "{{ kanidm_service_user }}"
+    group: "{{ kanidm_service_group }}"
+    mode: "0640"

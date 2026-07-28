@@ -1,0 +1,22 @@
+# Ansible managed - Do not edit manually
+[Unit]
+Description=Kanidm Identity Server
+After=network.target
+
+[Service]
+Type=simple
+User={{ kanidm_service_user }}
+Group={{ kanidm_service_group }}
+ExecStart={{ kanidm_install_dir }}/{{ _kanidm_binary_name }} server --config /etc/kanidm/kanidm.toml
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
