@@ -1,0 +1,8 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm-client
+
+- name: "Set up Kanidm PPA repository"
+  ansible.builtin.import_tasks: ppa.yml
+
+- name: "Install Kanidm client packages"
+  ansible.builtin.import_tasks: install.yml

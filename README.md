@@ -1,78 +1,66 @@
-# Kanidm_community Kanidm Collection
+# Ansible Collection - kanidm_community.kanidm
 
-This repository contains the `kanidm_community.kanidm` Ansible Collection.
+This collection provides Ansible roles for deploying and managing [Kanidm](https://kanidm.com/), a modern identity management platform.
 
-<!--start requires_ansible-->
-<!--end requires_ansible-->
+## Roles
 
-## External requirements
+| Role | Description |
+|------|-------------|
+| `kanidm-server` | Install and configure Kanidm server |
+| `kanidm-client` | Install Kanidm client CLI tools |
+| `kanidm-unixd` | Install and configure kanidm-unixd for PAM/SSSD integration |
 
-Some modules and plugins require external libraries. Please check the
-requirements for each plugin or module you use in the documentation to find out
-which requirements are needed.
+## Requirements
 
-## Included content
+- Ansible >= 2.15
+- Target systems: Debian 12+ or Ubuntu 22.04+
 
-<!--start collection content-->
-<!--end collection content-->
-
-## Using this collection
+## Installation
 
 ```bash
-    ansible-galaxy collection install kanidm_community.kanidm
+ansible-galaxy collection install kanidm_community.kanidm
 ```
 
-You can also include it in a `requirements.yml` file and install it via
-`ansible-galaxy collection install -r requirements.yml` using the format:
+## Usage
+
+### Install Kanidm Server
 
 ```yaml
-collections:
-  - name: kanidm_community.kanidm
+- name: Install Kanidm Server
+  hosts: kanidm_servers
+  become: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm-server
+      kanidm_domain: "idm.example.com"
+      kanidm_admin_email: "admin@example.com"
 ```
 
-To upgrade the collection to the latest available version, run the following
-command:
+### Install Client Tools
 
-```bash
-ansible-galaxy collection install kanidm_community.kanidm --upgrade
+```yaml
+- name: Install Kanidm Client
+  hosts: all
+  become: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm-client
 ```
 
-You can also install a specific version of the collection, for example, if you
-need to downgrade when something is broken in the latest version (please report
-an issue in this repository). Use the following syntax where `X.Y.Z` can be any
-[available version](https://galaxy.ansible.com/kanidm_community/kanidm):
+### Configure Unix Integration
 
-```bash
-ansible-galaxy collection install kanidm_community.kanidm:==X.Y.Z
+```yaml
+- name: Configure Kanidm Unixd
+  hosts: kanidm_clients
+  become: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm-unixd
+      kanidm_unixd_domain: "idm.example.com"
+      kanidm_unixd_server: "https://idm.example.com"
 ```
 
-See
-[Ansible Using Collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html)
-for more details.
+## License
 
-## Release notes
+MIT
 
-See the
-[changelog](https://github.com/ansible-collections/kanidm_community.kanidm/tree/main/CHANGELOG.rst).
+## Author Information
 
-## Roadmap
-
-<!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->
-
-## More information
-
-<!-- List out where the user can find additional information, such as working group meeting times, slack/matrix channels, or documentation for the product this collection automates. At a minimum, link to: -->
-
-- [Ansible collection development forum](https://forum.ansible.com/c/project/collection-development/27)
-- [Ansible User guide](https://docs.ansible.com/ansible/devel/user_guide/index.html)
-- [Ansible Developer guide](https://docs.ansible.com/ansible/devel/dev_guide/index.html)
-- [Ansible Collections Checklist](https://docs.ansible.com/ansible/devel/community/collection_contributors/collection_requirements.html)
-- [Ansible Community code of conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html)
-- [The Bullhorn (the Ansible Contributor newsletter)](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn)
-- [News for Maintainers](https://forum.ansible.com/tag/news-for-maintainers)
-
-## Licensing
-
-MIT license.
-
-See [LICENSE](LICENSE).
+Kanidm Community Collection

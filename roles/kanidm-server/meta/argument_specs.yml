@@ -1,0 +1,115 @@
+---
+argument_specs:
+  main:
+    short_description: Install and configure Kanidm identity server via APT
+    description:
+      - Installs Kanidm server from the official PPA
+      - Configures listening address and domain
+      - Manages TLS certificates via certbot or manual configuration
+      - Sets up systemd service
+    version_added: "0.1.0"
+    options:
+      kanidm_server_version:
+        description: Version of Kanidm server to install from PPA
+        type: str
+        default: "1.1.0-1"
+      kanidm_server_distro_codename:
+        description: Distribution codename (auto-detected if empty)
+        type: str
+        default: ""
+      kanidm_ppa_url:
+        description: PPA repository URL
+        type: str
+        default: "https://kanidm.github.io/kanidm_ppa"
+      kanidm_ppa_component:
+        description: PPA component (stable or nightly)
+        type: str
+        choices:
+          - stable
+          - nightly
+        default: "stable"
+      kanidm_server_packages:
+        description: APT packages to install
+        type: list
+        elements: str
+        default:
+          - kanidm-server
+          - kanidm-tools
+      kanidm_service_user:
+        description: System user running Kanidm
+        type: str
+        default: "kanidm"
+      kanidm_service_group:
+        description: System group running Kanidm
+        type: str
+        default: "kanidm"
+      kanidm_listen_address:
+        description: Address and port to listen on
+        type: str
+        default: "0.0.0.0:8443"
+      kanidm_domain:
+        description: Domain name for the Kanidm server
+        type: str
+        default: "idm.example.com"
+      kanidm_data_dir:
+        description: Directory for Kanidm data storage
+        type: str
+        default: "/var/lib/kanidm"
+      kanidm_log_level:
+        description: Log level for Kanidm
+        type: str
+        choices:
+          - trace
+          - debug
+          - info
+          - warn
+          - error
+        default: "info"
+      kanidm_admin_email:
+        description: Admin email for domain configuration
+        type: str
+        default: "admin@example.com"
+      kanidm_certbot_enabled:
+        description: Enable automatic TLS certificate management via certbot
+        type: bool
+        default: false
+      kanidm_certbot_email:
+        description: Email for certbot account registration
+        type: str
+        default: "admin@example.com"
+      kanidm_certificate_dir:
+        description: Directory for storing TLS certificates
+        type: str
+        default: "/etc/kanidm/certs"
+      kanidm_tls_cert_file:
+        description: Path to TLS certificate file (used when certbot is disabled)
+        type: str
+        default: ""
+      kanidm_tls_key_file:
+        description: Path to TLS key file (used when certbot is disabled)
+        type: str
+        default: ""
+      kanidm_http_port:
+        description: HTTP port for certbot HTTP-01 challenge
+        type: int
+        default: 80
+      kanidm_database_path:
+        description: Path to the Kanidm database file
+        type: str
+        default: "/var/lib/kanidm/kanidm.db"
+      kanidm_service_name:
+        description: Name of the systemd service
+        type: str
+        default: "kanidm"
+      kanidm_service_state:
+        description: Desired state of the service
+        type: str
+        choices:
+          - started
+          - stopped
+          - restarted
+        default: "started"
+      kanidm_service_enabled:
+        description: Enable service on boot
+        type: bool
+        default: true

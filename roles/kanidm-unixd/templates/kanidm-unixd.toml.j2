@@ -1,0 +1,17 @@
+# Ansible managed - Do not edit manually
+# Kanidm Unixd configuration file
+
+[kanidm_unixd]
+domain = "{{ kanidm_unixd_domain }}"
+server = "{{ kanidm_unixd_server }}"
+realm = "{{ kanidm_unixd_realmd_domain }}"
+cache_timeout = {{ kanidm_unixd_cache_timeout }}
+
+[nss]
+enable = {{ kanidm_unixd_nss_enable | lower }}
+groups = {{ kanidm_unixd_nss_groups | lower }}
+extra_groups = {{ kanidm_unixd_nss_extra_groups | lower }}
+
+[pam]
+enable = {{ kanidm_unixd_pam_enable | lower }}
+ssh = {{ kanidm_unixd_pam_ssh | lower }}

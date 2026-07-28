@@ -1,0 +1,10 @@
+---
+major_changes:
+  - Restructured collection into three roles: kanidm-server, kanidm-client, and kanidm-unixd
+  - Switched from binary download to APT repository (kanidm_ppa) for all packages
+  - Added GPG key file for repository authentication
+
+minor_changes:
+  - Added kanidm-client role for installing Kanidm CLI tools
+  - Added kanidm-unixd role for PAM/SSSD integration
+  - Auto-detect distribution codename for PPA repository setup

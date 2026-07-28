@@ -1,0 +1,16 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm-server - service management
+
+- name: "Ensure Kanidm service is enabled and started"
+  ansible.builtin.systemd:
+    name: "{{ kanidm_service_name }}"
+    state: "{{ kanidm_service_state }}"
+    enabled: "{{ kanidm_service_enabled }}"
+    daemon_reload: true
+
+- name: "Verify Kanidm service is running"
+  ansible.builtin.wait_for:
+    port: "{{ kanidm_listen_address.split(':')[1] | int }}"
+    delay: 5
+    timeout: 60
+  when: kanidm_service_state == "started"

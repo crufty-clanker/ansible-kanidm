@@ -1,0 +1,49 @@
+---
+# defaults file for kanidm_community.kanidm.kanidm-unixd
+
+# Version of kanidm-unixd to install (from PPA)
+kanidm_unixd_version: "1.1.0-1"
+
+# Distribution codename (auto-detected if empty)
+kanidm_unixd_distro_codename: ""
+
+# PPA repository URL
+kanidm_unixd_ppa_url: "https://kanidm.github.io/kanidm_ppa"
+
+# PPA component (stable or nightly)
+kanidm_unixd_ppa_component: "stable"
+
+# APT packages to install
+kanidm_unixd_packages:
+  - kanidm-unixd
+  - libnss-kanidm
+  - libpam-kanidm
+
+# Kanidm Unixd configuration
+kanidm_unixd_domain: "idm.example.com"
+kanidm_unixd_server: "https://idm.example.com"
+kanidm_unixd_realmd_domain: "idm.example.com"
+kanidm_unixd_cache_timeout: 3600
+
+# NSS configuration
+kanidm_unixd_nss_enable: true
+kanidm_unixd_nss_groups: true
+kanidm_unixd_nss_extra_groups: true
+
+# PAM configuration
+kanidm_unixd_pam_enable: true
+kanidm_unixd_pam_ssh: true
+
+# Kanidm Unixd service user
+kanidm_unixd_service_user: "kanidm-unixd"
+kanidm_unixd_service_group: "kanidm-unixd"
+
+# Kanidm Unixd service state
+kanidm_unixd_service_state: "started"
+
+# Kanidm Unixd service enabled on boot
+kanidm_unixd_service_enabled: true
+
+# APT key settings
+kanidm_unixd_ppa_gpg_key_file: "kanidm_ppa.asc"
+kanidm_unixd_ppa_gpg_key_dest: "/etc/apt/trusted.gpg.d/kanidm_ppa.asc"
