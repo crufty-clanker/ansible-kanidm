@@ -2,9 +2,10 @@
 # tasks file for kanidm_community.kanidm.kanidm - detect if version has changed
 # Runs before install so the upgrade check can proceed even if binary download fails
 
-- name: "Set default version change flag"
+- name: "Set default facts"
   ansible.builtin.set_fact:
     _kanidm_version_changed: false
+    _kanidm_is_fresh_install: false
 
 - name: "Get currently running Kanidm version"
   ansible.builtin.command:
@@ -15,24 +16,24 @@
   become: true
   become_user: "{{ kanidm_service_user }}"
 
+- name: "Detect fresh install (no existing binary)"
+  ansible.builtin.set_fact:
+    _kanidm_is_fresh_install: true
+  when: _kanidm_running_version.rc | default(127) != 0
+
 - name: "Parse running version components"
   ansible.builtin.set_fact:
-    _kanidm_running_major: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '').split('-')[0]).split('.')[0] | int }}"
-    _kanidm_running_minor: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '').split('-')[0]).split('.')[1] | int }}"
+    _kanidm_running_major: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '')).split('-')[0]).split('.')[0] | int }}"
+    _kanidm_running_minor: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '')).split('-')[0]).split('.')[1] | int }}"
   when:
     - _kanidm_running_version.stdout | length > 0
     - kanidm_version | regex_search('^\\d+\\.\\d+')
 
-- name: "Set running version to '0.0.0' if unknown"
-  ansible.builtin.set_fact:
-    _kanidm_running_major: 0
-    _kanidm_running_minor: 0
-  when: _kanidm_running_version.stdout | length == 0
-
-- name: "Detect version change"
+- name: "Detect version change (skipped on fresh install)"
   ansible.builtin.set_fact:
     _kanidm_version_changed: true
   when: >-
+    not (_kanidm_is_fresh_install | bool) and
     (kanidm_version | regex_replace('^v?', '')) !=
     (_kanidm_running_version.stdout | regex_replace('^v?', '') | default(''))
 
@@ -53,6 +54,6 @@
 - name: "Report version status"
   ansible.builtin.debug:
     msg: >-
-      Kanidm version {{ kanidm_version }} (requested) vs
-      {{ _kanidm_running_version.stdout | default('unknown') }} (running).
-      Version changed: {{ _kanidm_version_changed | string }}.
+      Kanidm {{ 'fresh install' if (_kanidm_is_fresh_install | bool) else 'upgrade' }}.
+      Version: {{ kanidm_version }}.
+      Existing binary: {{ 'no' if (_kanidm_is_fresh_install | bool) else 'yes' }}.

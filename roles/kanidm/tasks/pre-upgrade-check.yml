@@ -2,6 +2,12 @@
 # tasks file for kanidm_community.kanidm.kanidm - pre-upgrade migration check
 # Runs 'kanidmd domain upgrade-check' per official documentation:
 # https://kanidm.github.io/kanidm/stable/server_updates.html
+# Skipped on fresh install (no existing data to protect)
+
+- name: "Skip upgrade check on fresh install"
+  ansible.builtin.debug:
+    msg: "Fresh install detected. Skipping upgrade check."
+  when: _kanidm_is_fresh_install | bool
 
 - name: "Run Kanidm domain upgrade check"
   ansible.builtin.command:
@@ -14,6 +20,7 @@
   become_user: "{{ kanidm_service_user }}"
   environment:
     KANIDM_OPTS: "--origin https://{{ kanidm_domain }}"
+  when: not (_kanidm_is_fresh_install | bool)
 
 - name: "Parse upgrade check results"
   ansible.builtin.set_fact:
@@ -21,6 +28,7 @@
       {{ _kanidm_upgrade_check.stdout_lines
          | select('search', '^upgrade_item')
          | list }}
+  when: not (_kanidm_is_fresh_install | bool)
 
 - name: "Check for FAIL status in upgrade check"
   ansible.builtin.assert:
@@ -30,8 +38,9 @@
       See output above for details on affected entries and required actions.
       After resolving, re-run this role.
     success_msg: "Kanidm domain upgrade check passed."
+  when: not (_kanidm_is_fresh_install | bool)
 
 - name: "Report upgrade check result"
   ansible.builtin.debug:
     msg: "Kanidm upgrade check passed. Ready to proceed with upgrade."
-  when: "'FAIL' not in _kanidm_upgrade_check.stdout"
+  when: not (_kanidm_is_fresh_install | bool) and "'FAIL' not in _kanidm_upgrade_check.stdout"

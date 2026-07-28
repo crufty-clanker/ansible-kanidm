@@ -10,18 +10,18 @@
     mode: "0644"
   notify: "Reload systemd"
 
-- name: "Restart Kanidm on version change"
+- name: "Restart Kanidm on version change or fresh install"
   ansible.builtin.systemd:
     name: "{{ kanidm_service_name }}"
     state: "{{ kanidm_service_state }}"
     enabled: "{{ kanidm_service_enabled }}"
     daemon_reload: true
-  when: _kanidm_version_changed | bool
+  when: (_kanidm_version_changed | bool) or (_kanidm_is_fresh_install | bool)
 
 - name: "Skip restart when version unchanged"
   ansible.builtin.debug:
     msg: "Kanidm binary unchanged. Skipping service restart."
-  when: not (_kanidm_version_changed | bool)
+  when: not ((_kanidm_version_changed | bool) or (_kanidm_is_fresh_install | bool))
 
 - name: "Verify Kanidm service is running"
   ansible.builtin.wait_for:
@@ -30,4 +30,4 @@
     timeout: 60
   when:
     - kanidm_service_state == "started"
-    - _kanidm_version_changed | bool
+    - (_kanidm_version_changed | bool) or (_kanidm_is_fresh_install | bool)
