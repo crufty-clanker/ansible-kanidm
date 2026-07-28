@@ -26,21 +26,38 @@
     group: root
   register: _kanidm_binary_download
 
-- name: "Mark binary as changed when downloaded"
-  ansible.builtin.set_fact:
-    _kanidm_binary_changed: true
-  when: _kanidm_binary_download.changed | bool
-
-- name: "Set default changed state"
-  ansible.builtin.set_fact:
-    _kanidm_binary_changed: false
-  when: _kanidm_binary_download.changed | bool == false
-
-- name: "Verify Kanidm binary version"
+- name: "Verify new Kanidm binary version"
   ansible.builtin.command:
     cmd: "{{ kanidm_install_dir }}/{{ _kanidm_binary_name }} --version"
-  register: _kanidm_version_output
+  register: _kanidm_new_version
   changed_when: false
   become: true
   become_user: root
-  failed_when: _kanidm_version_output.stdout | regex_search(kanidm_version) | not
+  failed_when: _kanidm_new_version.stdout | regex_search(kanidm_version) | not
+
+- name: "Get currently running Kanidm version"
+  ansible.builtin.command:
+    cmd: kanidmd --version
+  register: _kanidm_running_version
+  changed_when: false
+  failed_when: false
+  become: true
+  become_user: "{{ kanidm_service_user }}"
+
+- name: "Set default version change flag"
+  ansible.builtin.set_fact:
+    _kanidm_version_changed: false
+
+- name: "Detect version change"
+  ansible.builtin.set_fact:
+    _kanidm_version_changed: true
+  when: >-
+    _kanidm_binary_download.changed | bool and
+    (_kanidm_running_version.stdout | regex_search(kanidm_version) | default(false) | bool) | not
+
+- name: "Report version status"
+  ansible.builtin.debug:
+    msg: >-
+      Kanidm version {{ kanidm_version }} (new) vs
+      {{ _kanidm_running_version.stdout | default('unknown') }} (running).
+      Version changed: {{ _kanidm_version_changed | string }}.
