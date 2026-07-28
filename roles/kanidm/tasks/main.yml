@@ -7,12 +7,15 @@
 - name: "Create kanidm service user and group"
   ansible.builtin.import_tasks: users.yml
 
-- name: "Install Kanidm"
-  ansible.builtin.import_tasks: install.yml
+- name: "Detect version change"
+  ansible.builtin.import_tasks: detect-version-change.yml
 
-- name: "Run pre-upgrade migration check"
+- name: "Run pre-upgrade database check"
   ansible.builtin.import_tasks: pre-upgrade-check.yml
   when: _kanidm_version_changed | bool
+
+- name: "Install Kanidm"
+  ansible.builtin.import_tasks: install.yml
 
 - name: "Configure Kanidm"
   ansible.builtin.import_tasks: configure.yml

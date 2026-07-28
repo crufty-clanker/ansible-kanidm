@@ -1,5 +1,6 @@
 ---
 # tasks file for kanidm_community.kanidm.kanidm - installation
+# Version detection is handled in detect-version-change.yml before install
 
 - name: "Calculate Kanidm architecture suffix"
   ansible.builtin.set_fact:
@@ -35,57 +36,10 @@
   become_user: root
   failed_when: _kanidm_new_version.stdout | regex_search(kanidm_version) | not
 
-- name: "Get currently running Kanidm version"
-  ansible.builtin.command:
-    cmd: kanidmd --version
-  register: _kanidm_running_version
-  changed_when: false
-  failed_when: false
-  become: true
-  become_user: "{{ kanidm_service_user }}"
-
-- name: "Set default version change flag"
-  ansible.builtin.set_fact:
-    _kanidm_version_changed: false
-
-- name: "Detect version change"
-  ansible.builtin.set_fact:
-    _kanidm_version_changed: true
-  when: >-
-    _kanidm_binary_download.changed | bool and
-    (_kanidm_running_version.stdout | regex_search(kanidm_version) | default(false) | bool) | not
-
-- name: "Parse requested version components"
-  ansible.builtin.set_fact:
-    _kanidm_target_major: "{{ kanidm_version.split('.')[0] | int }}"
-    _kanidm_target_minor: "{{ kanidm_version.split('.')[1] | int }}"
-  when: kanidm_version | regex_search('^\\d+\\.\\d+')
-
-- name: "Parse running version components"
-  ansible.builtin.set_fact:
-    _kanidm_running_major: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '').split('-')[0]).split('.')[0] | int }}"
-    _kanidm_running_minor: "{{ (_kanidm_running_version.stdout | regex_replace('^v?', '').split('-')[0]).split('.')[1] | int }}"
-  when:
-    - _kanidm_running_version.stdout | length > 0
-    - kanidm_version | regex_search('^\\d+\\.\\d+')
-
-- name: "Check for sequential upgrade requirement"
-  ansible.builtin.fail:
-    msg: >-
-      Kanidm requires sequential upgrades through each minor version.
-      Current version: {{ _kanidm_running_version.stdout | default('unknown') }}
-      Target version: {{ kanidm_version }}
-      You must upgrade through intermediate versions first.
-      Example: from 1.3.x, upgrade to 1.4.x, then 1.5.x.
-      Update kanidm_version to the next minor version and re-run.
-  when:
-    - _kanidm_version_changed | bool
-    - _kanidm_running_major | default(0) == _kanidm_target_major
-    - (_kanidm_target_minor - _kanidm_running_minor | default(0)) | int > 1
-
-- name: "Report version status"
-  ansible.builtin.debug:
-    msg: >-
-      Kanidm version {{ kanidm_version }} (new) vs
-      {{ _kanidm_running_version.stdout | default('unknown') }} (running).
-      Version changed: {{ _kanidm_version_changed | string }}.
+- name: "Confirm version change was detected"
+  ansible.builtin.assert:
+    that: _kanidm_version_changed | bool
+    fail_msg: >-
+      Binary was downloaded but no version change was detected.
+      This may indicate a configuration issue.
+  when: _kanidm_binary_download.changed | bool
