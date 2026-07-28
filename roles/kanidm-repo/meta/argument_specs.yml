@@ -1,0 +1,37 @@
+---
+argument_specs:
+  main:
+    short_description: Set up Kanidm PPA repository
+    description:
+      - Installs prerequisites for APT repository
+      - Configures Kanidm PPA with GPG authentication
+      - Auto-detects distribution codename
+    version_added: "0.1.0"
+    options:
+      kanidm_repo_distro_codename:
+        description: Distribution codename (auto-detected if empty)
+        type: str
+        default: ""
+      kanidm_repo_url:
+        description: PPA repository URL
+        type: str
+        default: "https://kanidm.github.io/kanidm_ppa"
+      kanidm_repo_component:
+        description: PPA component (stable or nightly)
+        type: str
+        choices:
+          - stable
+          - nightly
+        default: "stable"
+      kanidm_repo_gpg_key_file:
+        description: GPG key filename in role files directory
+        type: str
+        default: "kanidm_ppa.gpg"
+      kanidm_repo_gpg_key_dest:
+        description: Destination path for GPG key
+        type: str
+        default: "/etc/apt/trusted.gpg.d/kanidm_ppa.gpg"
+      kanidm_repo_sources_list:
+        description: Path for sources list file
+        type: str
+        default: "/etc/apt/sources.list.d/kanidm_ppa.list"

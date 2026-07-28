@@ -2,7 +2,8 @@
 # tasks file for kanidm_community.kanidm.kanidm-server
 
 - name: "Set up Kanidm PPA repository"
-  ansible.builtin.import_tasks: ppa.yml
+  ansible.builtin.import_role:
+    name: kanidm_community.kanidm.kanidm-repo
 
 - name: "Ensure prerequisites are installed"
   ansible.builtin.import_tasks: prerequisites.yml

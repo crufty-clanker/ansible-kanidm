@@ -2,7 +2,8 @@
 # tasks file for kanidm_community.kanidm.kanidm-unixd
 
 - name: "Set up Kanidm PPA repository"
-  ansible.builtin.import_tasks: ppa.yml
+  ansible.builtin.import_role:
+    name: kanidm_community.kanidm.kanidm-repo
 
 - name: "Install kanidm-unixd packages"
   ansible.builtin.import_tasks: install.yml

@@ -1,0 +1,19 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm-repo - prerequisites
+
+- name: "Install gnupg, ca-certificates, and curl"
+  ansible.builtin.apt:
+    name:
+      - gnupg
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: true
+
+- name: "Create trusted.gpg.d directory"
+  ansible.builtin.file:
+    path: /etc/apt/trusted.gpg.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
