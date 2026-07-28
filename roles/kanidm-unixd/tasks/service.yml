@@ -1,9 +1,0 @@
----
-# tasks file for kanidm_community.kanidm.kanidm-unixd - service management
-
-- name: "Ensure kanidm-unixd service is enabled and started"
-  ansible.builtin.systemd:
-    name: "kanidm-unixd"
-    state: "{{ kanidm_unixd_service_state }}"
-    enabled: "{{ kanidm_unixd_service_enabled }}"
-    daemon_reload: true

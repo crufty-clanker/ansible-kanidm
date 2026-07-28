@@ -6,9 +6,9 @@ This collection provides Ansible roles for deploying and managing [Kanidm](https
 
 | Role | Description |
 |------|-------------|
-| `kanidm-server` | Install and configure Kanidm server |
-| `kanidm-client` | Install Kanidm client CLI tools |
-| `kanidm-unixd` | Install and configure kanidm-unixd for PAM/SSSD integration |
+| `kanidm_server` | Install and configure Kanidm server |
+| `kanidm_client` | Install Kanidm client CLI tools |
+| `kanidm_unixd` | Install and configure kanidm_unixd for PAM/SSSD integration |
 
 ## Requirements
 
@@ -30,7 +30,7 @@ ansible-galaxy collection install kanidm_community.kanidm
   hosts: kanidm_servers
   become: true
   roles:
-    - role: kanidm_community.kanidm.kanidm-server
+    - role: kanidm_community.kanidm.kanidm_server
       kanidm_domain: "idm.example.com"
       kanidm_admin_email: "admin@example.com"
 ```
@@ -42,7 +42,7 @@ ansible-galaxy collection install kanidm_community.kanidm
   hosts: all
   become: true
   roles:
-    - role: kanidm_community.kanidm.kanidm-client
+    - role: kanidm_community.kanidm.kanidm_client
 ```
 
 ### Configure Unix Integration
@@ -52,7 +52,7 @@ ansible-galaxy collection install kanidm_community.kanidm
   hosts: kanidm_clients
   become: true
   roles:
-    - role: kanidm_community.kanidm.kanidm-unixd
+    - role: kanidm_community.kanidm.kanidm_unixd
       kanidm_unixd_domain: "idm.example.com"
       kanidm_unixd_server: "https://idm.example.com"
 ```

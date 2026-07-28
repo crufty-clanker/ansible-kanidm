@@ -1,0 +1,3 @@
+---
+# handlers file for kanidm_community.kanidm.kanidm_client
+# (no handlers needed — repository role handles apt cache updates)

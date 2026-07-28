@@ -1,0 +1,19 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_server - install via APT
+
+- name: "Install Kanidm server packages"
+  ansible.builtin.apt:
+    name: "{{ kanidm_server_packages }}"
+    state: present
+    update_cache: true
+
+- name: "Verify Kanidm server version"
+  ansible.builtin.command:
+    cmd: kanidmd --version
+  register: _kanidm_server_version
+  changed_when: false
+  failed_when: false
+
+- name: "Report installed Kanidm version"
+  ansible.builtin.debug:
+    msg: "Kanidm server version: {{ _kanidm_server_version.stdout | default('unknown') }}"

@@ -1,0 +1,26 @@
+---
+# defaults file for kanidm_community.kanidm.kanidm_unixd
+
+# Version of kanidm_unixd to install (from PPA)
+kanidm_unixd_version: "1.1.0-1"
+
+# Kanidm Unixd configuration
+kanidm_unixd_domain: "idm.example.com"
+kanidm_unixd_server: "https://idm.example.com"
+kanidm_unixd_realmd_domain: "idm.example.com"
+kanidm_unixd_cache_timeout: 3600
+
+# NSS configuration
+kanidm_unixd_nss_enable: true
+kanidm_unixd_nss_groups: true
+kanidm_unixd_nss_extra_groups: true
+
+# PAM configuration
+kanidm_unixd_pam_enable: true
+kanidm_unixd_pam_ssh: true
+
+# Kanidm Unixd service state
+kanidm_unixd_service_state: "started"
+
+# Kanidm Unixd service enabled on boot
+kanidm_unixd_service_enabled: true

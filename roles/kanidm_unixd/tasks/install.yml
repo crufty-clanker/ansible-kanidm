@@ -1,0 +1,19 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_unixd - install via APT
+
+- name: "Install kanidm_unixd packages"
+  ansible.builtin.apt:
+    name: "{{ kanidm_unixd_packages }}"
+    state: present
+    update_cache: true
+
+- name: "Verify kanidm_unixd version"
+  ansible.builtin.command:
+    cmd: kanidm_unixd --version
+  register: _kanidm_unixd_version
+  changed_when: false
+  failed_when: false
+
+- name: "Report installed kanidm_unixd version"
+  ansible.builtin.debug:
+    msg: "kanidm_unixd version: {{ _kanidm_unixd_version.stdout | default('unknown') }}"

@@ -1,0 +1,18 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_server - user/group setup
+
+- name: "Create kanidm service group"
+  ansible.builtin.group:
+    name: "{{ kanidm_service_group }}"
+    system: true
+    state: present
+
+- name: "Create kanidm service user"
+  ansible.builtin.user:
+    name: "{{ kanidm_service_user }}"
+    group: "{{ kanidm_service_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ kanidm_data_dir }}"
+    createhome: false
+    state: present

@@ -1,0 +1,11 @@
+---
+# ansible-lint configuration
+# See https://ansible.readthedocs.io/projects/lint/configuring/
+
+skip_list:
+  - var-naming[no-role-prefix]
+
+warn_list:
+  - experimental
+
+profile: min

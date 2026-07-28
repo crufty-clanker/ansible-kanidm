@@ -1,8 +1,0 @@
----
-# handlers file for kanidm_community.kanidm.kanidm-server
-
-- name: "Restart kanidm service"
-  ansible.builtin.systemd:
-    name: "{{ kanidm_service_name }}"
-    state: restarted
-    enabled: true
