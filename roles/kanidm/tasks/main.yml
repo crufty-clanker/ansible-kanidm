@@ -10,6 +10,10 @@
 - name: "Install Kanidm"
   ansible.builtin.import_tasks: install.yml
 
+- name: "Run pre-upgrade migration check"
+  ansible.builtin.import_tasks: pre-upgrade-check.yml
+  when: _kanidm_version_changed | bool
+
 - name: "Configure Kanidm"
   ansible.builtin.import_tasks: configure.yml
 

@@ -1,3 +1,10 @@
 ---
 minor_changes:
   - Add kanidm role to install and configure Kanidm identity server with optional certbot TLS management.
+
+breaking_changes:
+  - Add pre-upgrade migration check (`kanidmd server check`) before restarting on version changes.
+    If breaking database migrations are detected, the role fails with instructions to resolve manually.
+
+bugfixes:
+  - Skip service restart when binary version is unchanged to prevent unnecessary downtime on repeated runs.

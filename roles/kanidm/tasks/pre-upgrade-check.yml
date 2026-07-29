@@ -1,0 +1,32 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - pre-upgrade migration check
+# Runs kanidmd server check to verify database compatibility before upgrading
+
+- name: "Run Kanidm pre-upgrade migration check"
+  ansible.builtin.command:
+    cmd: "{{ kanidm_install_dir }}/{{ _kanidm_binary_name }} server check --config /etc/kanidm/kanidm.toml"
+  register: _kanidm_migration_check
+  changed_when: false
+  become: true
+  become_user: root
+
+- name: "Parse migration check output"
+  ansible.builtin.set_fact:
+    _kanidm_migration_issues: >-
+      {{ _kanidm_migration_check.stdout_lines | select('search', 'BREAKING|migration.*requires|manual action') | list }}
+
+- name: "Fail on breaking migration issues"
+  ansible.builtin.fail:
+    msg: >-
+      Kanidm pre-upgrade check detected breaking changes that require manual resolution.
+      Please review the issues below and resolve them before upgrading:
+
+      {{ _kanidm_migration_issues | join('\n  ') }}
+
+      After resolving, re-run this role to continue the upgrade.
+  when: _kanidm_migration_issues | length > 0
+
+- name: "Report migration check result"
+  ansible.builtin.debug:
+    msg: "Kanidm migration check passed. No breaking changes detected."
+  when: _kanidm_migration_issues | length == 0

@@ -61,9 +61,33 @@ kanidm_tls_cert_file: "/etc/ssl/certs/kanidm.pem"
 kanidm_tls_key_file: "/etc/ssl/private/kanidm.key"
 ```
 
+## Upgrades
+
+Upgrades are handled automatically by the same role. The workflow:
+
+1. Role downloads the binary at `kanidm_version`
+2. Compares with the currently running version
+3. If changed, runs `kanidmd server check` to detect breaking database migrations
+4. Fails with a clear message if breaking changes require manual resolution
+5. On clean check, restarts the service to pick up the new binary
+
+To upgrade, simply bump the version and re-run:
+
+```yaml
+- hosts: kanidm_servers
+  become: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm
+      kanidm_version: "1.4.0"   # was "1.3.3"
+```
+
+If the migration check reports breaking changes, resolve them manually and re-run the role.
+
 ## Idempotency
 
 This role is idempotent. Running it multiple times will not produce changes on subsequent runs.
+
+**Note:** Service restart is skipped when the binary version is unchanged, preventing unnecessary downtime on repeated runs.
 
 ## License
 
