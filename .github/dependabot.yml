@@ -1,0 +1,46 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+
+updates:
+  # Maintain GitHub Actions versions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps):"
+    groups:
+      ansible-actions:
+        patterns:
+          - "ansible/*"
+          - "ansible-network/*"
+
+  # Maintain Python dependencies
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps):"
+    allow:
+      - dependency-type: "direct"
+
+  # Maintain pre-commit hook versions
+  - package-ecosystem: pre-commit
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps):"
