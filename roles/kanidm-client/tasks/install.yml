@@ -1,0 +1,19 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm-client - install via APT
+
+- name: "Install Kanidm client packages"
+  ansible.builtin.apt:
+    name: "{{ kanidm_client_packages }}"
+    state: present
+    update_cache: true
+
+- name: "Verify Kanidm client version"
+  ansible.builtin.command:
+    cmd: kanidm --version
+  register: _kanidm_client_version
+  changed_when: false
+  failed_when: false
+
+- name: "Report installed Kanidm client version"
+  ansible.builtin.debug:
+    msg: "Kanidm client version: {{ _kanidm_client_version.stdout | default('unknown') }}"

@@ -1,0 +1,33 @@
+---
+argument_specs:
+  main:
+    short_description: Install Kanidm client CLI tools via APT
+    description:
+      - Installs Kanidm client tools from the official PPA
+    version_added: "0.1.0"
+    options:
+      kanidm_client_version:
+        description: Version of Kanidm client to install from PPA
+        type: str
+        default: "1.1.0-1"
+      kanidm_client_distro_codename:
+        description: Distribution codename (auto-detected if empty)
+        type: str
+        default: ""
+      kanidm_client_ppa_url:
+        description: PPA repository URL
+        type: str
+        default: "https://kanidm.github.io/kanidm_ppa"
+      kanidm_client_ppa_component:
+        description: PPA component (stable or nightly)
+        type: str
+        choices:
+          - stable
+          - nightly
+        default: "stable"
+      kanidm_client_packages:
+        description: APT packages to install
+        type: list
+        elements: str
+        default:
+          - kanidm-tools
