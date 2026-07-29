@@ -1,0 +1,27 @@
+---
+- name: Test kanidm_repo role
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    kanidm_repo_distro_codename: ""  # auto-detect
+    kanidm_repo_component: "stable"
+  roles:
+    - role: kanidm_community.kanidm.kanidm_repo
+  tasks:
+    - name: Verify PPA sources list exists
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/kanidm_ppa.list
+      register: _sources_list
+
+    - name: Verify PPA GPG key exists
+      ansible.builtin.stat:
+        path: /etc/apt/trusted.gpg.d/kanidm_ppa.gpg
+      register: _gpg_key
+
+    - name: Report test results
+      ansible.builtin.assert:
+        that:
+          - _sources_list.stat.exists
+          - _gpg_key.stat.exists
+        success_msg: "kanidm_repo role: PASS - PPA configured correctly"

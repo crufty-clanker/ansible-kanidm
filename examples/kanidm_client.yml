@@ -1,0 +1,13 @@
+---
+# Example playbook: Kanidm CLI client
+#
+# Installs the Kanidm command-line tools for interacting with the identity server.
+# Target: Any Debian-based system
+
+- name: Install Kanidm client tools
+  hosts: kanidm_clients
+  become: true
+  vars:
+    kanidm_client_version: "1.1.0-1"
+  roles:
+    - role: kanidm_community.kanidm.kanidm_client

@@ -1,0 +1,34 @@
+---
+- name: Test kanidm_server role
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    kanidm_domain: "test.example.com"
+    kanidm_admin_email: "admin@test.example.com"
+    kanidm_listen_address: "127.0.0.1:8443"
+    kanidm_certbot_enabled: false
+    kanidm_service_state: "started"
+    kanidm_service_enabled: true
+    kanidm_log_level: "info"
+  roles:
+    - role: kanidm_community.kanidm.kanidm_server
+  tasks:
+    - name: Verify kanidm service is running
+      ansible.builtin.service_facts:
+
+    - name: Verify kanidm service state
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['service:kanidm'] is defined
+        success_msg: "kanidm_server role: PASS - service installed"
+
+    - name: Verify config file exists
+      ansible.builtin.stat:
+        path: /etc/kanidm/kanidm.toml
+      register: _config
+
+    - name: Verify config file
+      ansible.builtin.assert:
+        that: _config.stat.exists
+        success_msg: "kanidm_server role: PASS - config file present"

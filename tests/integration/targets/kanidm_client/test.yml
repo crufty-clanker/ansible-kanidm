@@ -1,0 +1,20 @@
+---
+- name: Test kanidm_client role
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    kanidm_client_version: "1.1.0-1"
+  roles:
+    - role: kanidm_community.kanidm.kanidm_client
+  tasks:
+    - name: Verify kanidm binary exists
+      ansible.builtin.command: kanidmd --version
+      register: _version
+      changed_when: false
+      failed_when: false
+
+    - name: Verify kanidm binary is installed
+      ansible.builtin.assert:
+        that: _version.rc == 0
+        success_msg: "kanidm_client role: PASS - kanidm-tools installed"

@@ -1,0 +1,20 @@
+---
+# Example playbook: Kanidm unixd (PAM/SSSD integration)
+#
+# Configures Linux PAM, NSS, and SSSD integration with Kanidm.
+# Target: Any Debian-based system that needs domain authentication
+
+- name: Install and configure Kanidm unixd
+  hosts: kanidm_unixd_hosts
+  become: true
+  vars:
+    kanidm_unixd_version: "1.1.0-1"
+    kanidm_unixd_domain: "idm.example.com"
+    kanidm_unixd_server: "https://idm.example.com"
+    kanidm_unixd_realmd_domain: "idm.example.com"
+    kanidm_unixd_cache_timeout: 3600
+    kanidm_unixd_nss_enable: true
+    kanidm_unixd_pam_enable: true
+    kanidm_unixd_pam_ssh: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm_unixd

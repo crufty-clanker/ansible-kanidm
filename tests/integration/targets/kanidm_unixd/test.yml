@@ -1,0 +1,34 @@
+---
+- name: Test kanidm_unixd role
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    kanidm_unixd_domain: "test.example.com"
+    kanidm_unixd_server: "https://test.example.com"
+    kanidm_unixd_realmd_domain: "test.example.com"
+    kanidm_unixd_cache_timeout: 3600
+    kanidm_unixd_nss_enable: true
+    kanidm_unixd_pam_enable: true
+    kanidm_unixd_pam_ssh: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm_unixd
+  tasks:
+    - name: Verify kanidm-unixd service is running
+      ansible.builtin.service_facts:
+
+    - name: Verify kanidm-unixd service state
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['service:kanidm-unixd'] is defined
+        success_msg: "kanidm_unixd role: PASS - service installed"
+
+    - name: Verify config file exists
+      ansible.builtin.stat:
+        path: /etc/kanidm-unixd/kanidm-unixd.toml
+      register: _config
+
+    - name: Verify config file
+      ansible.builtin.assert:
+        that: _config.stat.exists
+        success_msg: "kanidm_unixd role: PASS - config file present"

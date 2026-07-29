@@ -1,0 +1,25 @@
+---
+# Inventory for role testing
+# Use with: ansible-playbook -i tests/inventory examples/kanidm_*.yml
+
+kanidm_servers:
+  hosts:
+    kanidm-server-01:
+      ansible_host: "192.168.1.100"
+      ansible_user: "admin"
+
+kanidm_clients:
+  hosts:
+    kanidm-client-01:
+      ansible_host: "192.168.1.101"
+      ansible_user: "admin"
+
+kanidm_unixd_hosts:
+  hosts:
+    kanidm-unixd-01:
+      ansible_host: "192.168.1.102"
+      ansible_user: "admin"
+
+all:
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"

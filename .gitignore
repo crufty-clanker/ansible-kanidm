@@ -165,3 +165,25 @@ cython_debug/
 
 # Ansible
 .ansible/
+*.tar.gz
+*.tar.xz
+*.tar.zst
+collections/
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.ansible-lint-cache/
+ansible_collections/
+*~
+*.swp
+*.swo

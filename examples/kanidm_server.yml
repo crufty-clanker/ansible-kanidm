@@ -1,0 +1,22 @@
+---
+# Example playbook: Kanidm identity server
+#
+# Deploys a Kanidm server with optional certbot-managed TLS certificates.
+# Target: Debian 12+ or Ubuntu 22.04+
+
+- name: Install and configure Kanidm server
+  hosts: kanidm_servers
+  become: true
+  vars:
+    kanidm_server_version: "1.1.0-1"
+    kanidm_domain: "idm.example.com"
+    kanidm_admin_email: "admin@example.com"
+    kanidm_listen_address: "0.0.0.0:8443"
+    kanidm_log_level: "info"
+    kanidm_certbot_enabled: false  # Set true for automatic Let's Encrypt certs
+
+    # When certbot is disabled, provide your own TLS certificates:
+    # kanidm_tls_cert_file: "/etc/kanidm/certs/fullchain.pem"
+    # kanidm_tls_key_file: "/etc/kanidm/certs/privkey.pem"
+  roles:
+    - role: kanidm_community.kanidm.kanidm_server
