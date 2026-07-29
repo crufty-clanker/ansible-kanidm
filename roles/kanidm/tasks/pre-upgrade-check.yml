@@ -1,32 +1,37 @@
 ---
 # tasks file for kanidm_community.kanidm.kanidm - pre-upgrade migration check
-# Runs kanidmd server check to verify database compatibility before upgrading
+# Runs 'kanidmd domain upgrade-check' per official documentation:
+# https://kanidm.github.io/kanidm/stable/server_updates.html
 
-- name: "Run Kanidm pre-upgrade migration check"
+- name: "Run Kanidm domain upgrade check"
   ansible.builtin.command:
-    cmd: "{{ kanidm_install_dir }}/{{ _kanidm_binary_name }} server check --config /etc/kanidm/kanidm.toml"
-  register: _kanidm_migration_check
+    cmd: >-
+      {{ kanidm_install_dir }}/{{ _kanidm_binary_name }} domain upgrade-check
+      --url https://{{ kanidm_domain }}
+  register: _kanidm_upgrade_check
   changed_when: false
   become: true
-  become_user: root
+  become_user: "{{ kanidm_service_user }}"
+  environment:
+    KANIDM_OPTS: "--origin https://{{ kanidm_domain }}"
 
-- name: "Parse migration check output"
+- name: "Parse upgrade check results"
   ansible.builtin.set_fact:
-    _kanidm_migration_issues: >-
-      {{ _kanidm_migration_check.stdout_lines | select('search', 'BREAKING|migration.*requires|manual action') | list }}
+    _kanidm_upgrade_issues: >-
+      {{ _kanidm_upgrade_check.stdout_lines
+         | select('search', '^upgrade_item')
+         | list }}
 
-- name: "Fail on breaking migration issues"
-  ansible.builtin.fail:
-    msg: >-
-      Kanidm pre-upgrade check detected breaking changes that require manual resolution.
-      Please review the issues below and resolve them before upgrading:
+- name: "Check for FAIL status in upgrade check"
+  ansible.builtin.assert:
+    that: "'FAIL' not in _kanidm_upgrade_check.stdout"
+    fail_msg: >-
+      Kanidm pre-upgrade check detected issues that must be resolved before upgrading.
+      See output above for details on affected entries and required actions.
+      After resolving, re-run this role.
+    success_msg: "Kanidm domain upgrade check passed."
 
-      {{ _kanidm_migration_issues | join('\n  ') }}
-
-      After resolving, re-run this role to continue the upgrade.
-  when: _kanidm_migration_issues | length > 0
-
-- name: "Report migration check result"
+- name: "Report upgrade check result"
   ansible.builtin.debug:
-    msg: "Kanidm migration check passed. No breaking changes detected."
-  when: _kanidm_migration_issues | length == 0
+    msg: "Kanidm upgrade check passed. Ready to proceed with upgrade."
+  when: "'FAIL' not in _kanidm_upgrade_check.stdout"
