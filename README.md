@@ -21,6 +21,10 @@ This collection provides Ansible roles for deploying and managing [Kanidm](https
 ansible-galaxy collection install kanidm_community.kanidm
 ```
 
+## Documentation
+
+- [Upgrade Guide](docs/docsite/rst/upgrades.rst) — Sequential upgrade process
+
 ## Usage
 
 ### Install Kanidm Server
