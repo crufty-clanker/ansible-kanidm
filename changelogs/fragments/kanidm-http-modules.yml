@@ -1,0 +1,8 @@
+minor_changes:
+  - kanidm_api_token - manage service account API tokens (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidm_denied_names - manage denied names list (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidm_password_badlist - manage password badlist (https://github.com/kanidm/kanidm/issues/XXX)
+
+doc_changes:
+  - Added module documentation and examples for all new modules
+  - Added README.md in plugins/modules/ with module descriptions and examples

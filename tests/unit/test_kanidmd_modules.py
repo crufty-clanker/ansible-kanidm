@@ -163,3 +163,21 @@ class TestKanidmdModuleMixin:
         assert rc == 0
         assert stdout == '{"name": "test"}'
         assert stderr == ""
+
+    def test_build_kanidmd_args_vacuum(self):
+        params = {}
+        module = MockKanidmdModule(params)
+        args = module._build_kanidmd_args(["database", "vacuum"])
+        assert args == ["kanidmd", "database", "vacuum"]
+
+    def test_build_kanidmd_args_reindex(self):
+        params = {}
+        module = MockKanidmdModule(params)
+        args = module._build_kanidmd_args(["database", "reindex"])
+        assert args == ["kanidmd", "database", "reindex"]
+
+    def test_build_kanidmd_args_configtest(self):
+        params = {}
+        module = MockKanidmdModule(params)
+        args = module._build_kanidmd_args(["configtest"])
+        assert args == ["kanidmd", "configtest"]

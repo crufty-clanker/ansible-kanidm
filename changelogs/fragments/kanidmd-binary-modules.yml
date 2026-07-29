@@ -1,0 +1,10 @@
+minor_changes:
+  - kanidmd_backup - database backup module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_restore - database restore module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_reload - config reload module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_verify - database verify module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_vacuum - database vacuum module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_reindex - database reindex module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_configtest - config test module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_disable_account - disable account module (https://github.com/kanidm/kanidm/issues/XXX)
+  - kanidmd_recover_account - recover account module (https://github.com/kanidm/kanidm/issues/XXX)
