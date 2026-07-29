@@ -65,19 +65,29 @@ kanidm_tls_key_file: "/etc/ssl/private/kanidm.key"
 
 Kanidm requires **sequential upgrades** — you must upgrade through each version in sequence (e.g. 1.5 → 1.6 → 1.7). Skip upgrades are not supported.
 
-The role handles this automatically: if the target version is more than one minor version ahead, it will upgrade through each intermediate version.
+The role handles this automatically: if the target version is more than one minor version ahead, it will block with instructions on which intermediate version to install first.
 
 ### Upgrade workflow
 
-1. Role downloads the binary at `kanidm_version`
-2. Compares with the currently running version
-3. If changed, runs `kanidmd domain upgrade-check` to verify database compatibility
-4. Fails with a clear message if breaking changes require manual resolution
-5. On clean check, restarts the service to pick up the new binary
+1. Role checks if the current binary exists (fresh install vs upgrade)
+2. On fresh install: skips upgrade check (no data to protect), downloads binary, starts service
+3. On upgrade: runs `kanidmd domain upgrade-check` **before** downloading anything
+4. If check fails: stops immediately — no download, no service change
+5. If check passes: downloads new binary and restarts service
 
 ### Example
 
-To upgrade from 1.3.3 to 1.5.0, you must go through 1.4.x first:
+**Fresh install** — just set the version:
+
+```yaml
+- hosts: kanidm_servers
+  become: true
+  roles:
+    - role: kanidm_community.kanidm.kanidm
+      kanidm_version: "1.5.0"
+```
+
+**Upgrade** — go through each minor version:
 
 ```yaml
 # Step 1: Upgrade to 1.4.0
