@@ -1,0 +1,8 @@
+---
+major_changes:
+  - Extract PPA repository setup into shared `kanidm-repo` role
+  - Dearmor GPG key to binary format (`.gpg`) for APT compatibility
+
+minor_changes:
+  - Remove redundant PPA setup code from server, client, and unixd roles
+  - Consolidate repository configuration in one place

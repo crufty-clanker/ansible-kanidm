@@ -4,20 +4,6 @@
 # Version of Kanidm to install (from PPA)
 kanidm_server_version: "1.1.0-1"
 
-# Distribution codename (auto-detected if empty)
-kanidm_server_distro_codename: ""
-
-# PPA repository URL
-kanidm_ppa_url: "https://kanidm.github.io/kanidm_ppa"
-
-# PPA component (stable or nightly)
-kanidm_ppa_component: "stable"
-
-# APT packages to install
-kanidm_server_packages:
-  - kanidm-server
-  - kanidm-tools
-
 # Kanidm service user
 kanidm_service_user: "kanidm"
 kanidm_service_group: "kanidm"
@@ -60,7 +46,3 @@ kanidm_service_state: "started"
 
 # Kanidm service enabled on boot
 kanidm_service_enabled: true
-
-# APT key settings
-kanidm_ppa_gpg_key_file: "kanidm_ppa.asc"
-kanidm_ppa_gpg_key_dest: "/etc/apt/trusted.gpg.d/kanidm_ppa.asc"

@@ -1,0 +1,7 @@
+---
+# handlers file for kanidm_community.kanidm.kanidm-repo
+
+- name: "Update apt cache"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600

@@ -1,0 +1,48 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm-repo - configure PPA
+
+- name: "Copy Kanidm PPA GPG key"
+  ansible.builtin.copy:
+    src: "{{ kanidm_repo_gpg_key_file }}"
+    dest: "{{ kanidm_repo_gpg_key_dest }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Detect distribution codename"
+  ansible.builtin.command:
+    cmd: . /etc/os-release && echo ${VERSION_CODENAME}
+  register: _kanidm_repo_distro_codename
+  changed_when: false
+  failed_when: false
+  when: kanidm_repo_distro_codename | length == 0
+
+- name: "Set distribution codename fact"
+  ansible.builtin.set_fact:
+    _kanidm_repo_distro_codename: "{{ kanidm_repo_distro_codename }}"
+  when: kanidm_repo_distro_codename | length > 0
+
+- name: "Set codename from detection"
+  ansible.builtin.set_fact:
+    _kanidm_repo_distro_codename: "{{ _kanidm_repo_distro_codename.stdout }}"
+  when: kanidm_repo_distro_codename | length == 0 and _kanidm_repo_distro_codename.stdout | length > 0
+
+- name: "Fail if codename detection failed"
+  ansible.builtin.fail:
+    msg: "Could not detect distribution codename. Set kanidm_repo_distro_codename manually."
+  when: _kanidm_repo_distro_codename | length == 0 or _kanidm_repo_distro_codename == ""
+
+- name: "Add Kanidm PPA sources list"
+  ansible.builtin.copy:
+    content: |
+      deb [arch=amd64,arm64 signed-by={{ kanidm_repo_gpg_key_dest }}] {{ kanidm_repo_url }} {{ _kanidm_repo_distro_codename }} {{ kanidm_repo_component }}
+    dest: "{{ kanidm_repo_sources_list }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: "Update apt cache"
+
+- name: "Update apt cache"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
