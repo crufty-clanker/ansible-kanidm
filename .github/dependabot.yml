@@ -18,6 +18,9 @@ updates:
         patterns:
           - "ansible/*"
           - "ansible-network/*"
+      all-actions:
+        patterns:
+          - "*"
 
   # Maintain Python dependencies
   - package-ecosystem: pip
@@ -32,6 +35,17 @@ updates:
       prefix: "chore(deps):"
     allow:
       - dependency-type: "direct"
+    groups:
+      ansible-dependencies:
+        patterns:
+          - "ansible*"
+          - "antsibull*"
+      development-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "ansible*"
+          - "antsibull*"
 
   # Maintain pre-commit hook versions
   - package-ecosystem: pre-commit
@@ -44,3 +58,7 @@ updates:
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore(deps):"
+    groups:
+      pre-commit-hooks:
+        patterns:
+          - "*"
