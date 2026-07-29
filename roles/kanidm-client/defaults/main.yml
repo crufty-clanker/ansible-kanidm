@@ -1,9 +1,0 @@
----
-# defaults file for kanidm_community.kanidm.kanidm-client
-
-# Version of Kanidm client to install (from PPA)
-kanidm_client_version: "1.1.0-1"
-
-# APT packages to install
-kanidm_client_packages:
-  - kanidm-tools

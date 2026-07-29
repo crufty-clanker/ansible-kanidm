@@ -1,0 +1,24 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_unixd - PAM configuration
+
+- name: "Add PAM stack for Kanidm"
+  ansible.builtin.copy:
+    content: |
+      # Kanidm PAM configuration
+      auth    required    pam_kanidm.so
+      account required    pam_kanidm.so
+      password required    pam_kanidm.so
+    dest: /etc/pam.d/kanidm
+    owner: root
+    group: root
+    mode: "0644"
+  notify: "Restart kanidm_unixd service"
+
+- name: "Include Kanidm in system-auth"
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/system-auth
+    line: "auth    required    pam_kanidm.so"
+    create: true
+    mode: "0644"
+  when: kanidm_unixd_pam_ssh | bool
+  notify: "Restart kanidm_unixd service"

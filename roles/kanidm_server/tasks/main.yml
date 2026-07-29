@@ -1,0 +1,25 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_server
+
+- name: "Set up Kanidm PPA repository"
+  ansible.builtin.import_role:
+    name: kanidm_community.kanidm.kanidm_repo
+
+- name: "Ensure prerequisites are installed"
+  ansible.builtin.import_tasks: prerequisites.yml
+
+- name: "Create kanidm service user and group"
+  ansible.builtin.import_tasks: users.yml
+
+- name: "Install Kanidm server packages"
+  ansible.builtin.import_tasks: install.yml
+
+- name: "Configure Kanidm"
+  ansible.builtin.import_tasks: configure.yml
+
+- name: "Configure certificates"
+  ansible.builtin.import_tasks: certificates.yml
+  when: kanidm_certbot_enabled | bool
+
+- name: "Manage Kanidm service"
+  ansible.builtin.import_tasks: service.yml

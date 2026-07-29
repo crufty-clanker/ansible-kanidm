@@ -1,8 +1,0 @@
----
-# handlers file for kanidm_community.kanidm.kanidm-unixd
-
-- name: "Restart kanidm-unixd service"
-  ansible.builtin.systemd:
-    name: "kanidm-unixd"
-    state: restarted
-    enabled: true

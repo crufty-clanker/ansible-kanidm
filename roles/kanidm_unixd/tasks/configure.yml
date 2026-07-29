@@ -1,0 +1,27 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_unixd - configuration
+
+- name: "Create configuration directory"
+  ansible.builtin.file:
+    path: /etc/kanidm_unixd
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "Generate kanidm_unixd configuration file"
+  ansible.builtin.template:
+    src: kanidm_unixd.toml.j2
+    dest: /etc/kanidm_unixd/kanidm_unixd.toml
+    owner: root
+    group: root
+    mode: "0640"
+  notify: "Restart kanidm_unixd service"
+
+- name: "Configure NSS for Kanidm"
+  ansible.builtin.include_tasks: nss.yml
+  when: kanidm_unixd_nss_enable | bool
+
+- name: "Configure PAM for Kanidm"
+  ansible.builtin.include_tasks: pam.yml
+  when: kanidm_unixd_pam_enable | bool

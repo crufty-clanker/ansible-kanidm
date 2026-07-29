@@ -1,0 +1,24 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm_unixd - NSS configuration
+
+- name: "Update NSS configuration for Kanidm"
+  ansible.builtin.lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: "^{{ item }}:"
+    line: "{{ item }}: files kanidm"
+    create: false
+  loop:
+    - passwd
+    - group
+  notify: "Restart kanidm_unixd service"
+
+- name: "Configure NSS libraries for Kanidm"
+  ansible.builtin.lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: "^{{ item }}:"
+    line: "{{ item }}: compat kanidm"
+    create: false
+  loop:
+    - shadow
+  notify: "Restart kanidm_unixd service"
+  when: kanidm_unixd_nss_groups | bool
