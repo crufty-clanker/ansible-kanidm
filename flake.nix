@@ -22,6 +22,7 @@
             mypy
             pytest
             yamllint
+            tox
           ];
 
           shellHook = ''
@@ -37,7 +38,7 @@
 
             echo "Ready. Tools available:"
             echo "  ansible-creator, ansible-lint, ansible-navigator, pytest-ansible, molecule, tox-ansible (via ansible-dev-tools)"
-            echo "  antsibull-docs, pytest, mypy, ruff, yamllint"
+            echo "  antsibull-docs, pytest, mypy, ruff, yamllint, tox"
           '';
         };
       });
