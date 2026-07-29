@@ -1,0 +1,19 @@
+[project]
+name = "ansible-collection-devenv"
+version = "0.1.0"
+description = "Dev environment dependencies for Ansible collection work"
+requires-python = ">=3.11"
+dependencies = [
+    "ansible-dev-tools",
+    "antsibull-docs",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]  # pycodestyle, pyflakes, isort
+
+[tool.ruff.format]
+# ruff format is a drop-in Black replacement; defaults already match Black's style
