@@ -1,0 +1,46 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - installation
+
+- name: "Calculate Kanidm architecture suffix"
+  ansible.builtin.set_fact:
+    _kanidm_arch: "{{ _kanidm_arch_map[kanidm_arch] | default('amd64') }}"
+
+- name: "Construct Kanidm download URL"
+  ansible.builtin.set_fact:
+    _kanidm_download_url: "{{ _kanidm_base_url }}/{{ kanidm_version }}/kanidmd-{{ kanidm_version }}-{{ _kanidm_arch }}"
+
+- name: "Create install directory"
+  ansible.builtin.file:
+    path: "{{ kanidm_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "Download Kanidm binary"
+  ansible.builtin.get_url:
+    url: "{{ _kanidm_download_url }}"
+    dest: "{{ kanidm_install_dir }}/{{ _kanidm_binary_name }}"
+    mode: "0755"
+    owner: root
+    group: root
+  register: _kanidm_binary_download
+
+- name: "Mark binary as changed when downloaded"
+  ansible.builtin.set_fact:
+    _kanidm_binary_changed: true
+  when: _kanidm_binary_download.changed | bool
+
+- name: "Set default changed state"
+  ansible.builtin.set_fact:
+    _kanidm_binary_changed: false
+  when: _kanidm_binary_download.changed | bool == false
+
+- name: "Verify Kanidm binary version"
+  ansible.builtin.command:
+    cmd: "{{ kanidm_install_dir }}/{{ _kanidm_binary_name }} --version"
+  register: _kanidm_version_output
+  changed_when: false
+  become: true
+  become_user: root
+  failed_when: _kanidm_version_output.stdout | regex_search(kanidm_version) | not

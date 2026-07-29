@@ -1,0 +1,20 @@
+# Ansible managed - Do not edit manually
+# Kanidm configuration file
+
+[server]
+bind_address = "{{ kanidm_listen_address }}"
+domain = "{{ kanidm_domain }}"
+tls_cert = "{{ kanidm_tls_cert_file }}"
+tls_key = "{{ kanidm_tls_key_file }}"
+
+[db]
+db_backend = "sqlite"
+db_path = "{{ kanidm_database_path }}"
+
+[logging]
+level = "{{ kanidm_log_level }}"
+format = "json"
+
+[admin]
+admin_account = "admin"
+admin_email = "{{ kanidm_admin_email }}"

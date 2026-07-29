@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - Add kanidm role to install and configure Kanidm identity server with optional certbot TLS management.

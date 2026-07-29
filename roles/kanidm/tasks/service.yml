@@ -1,0 +1,25 @@
+---
+# tasks file for kanidm_community.kanidm.kanidm - service management
+
+- name: "Deploy systemd service file"
+  ansible.builtin.template:
+    src: kanidm.service.j2
+    dest: /etc/systemd/system/{{ kanidm_service_name }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: "Reload systemd"
+
+- name: "Enable and start Kanidm service"
+  ansible.builtin.systemd:
+    name: "{{ kanidm_service_name }}"
+    state: "{{ kanidm_service_state }}"
+    enabled: "{{ kanidm_service_enabled }}"
+    daemon_reload: true
+
+- name: "Verify Kanidm service is running"
+  ansible.builtin.wait_for:
+    port: "{{ kanidm_listen_address.split(':')[1] | int }}"
+    delay: 5
+    timeout: 60
+  when: kanidm_service_state == "started"
