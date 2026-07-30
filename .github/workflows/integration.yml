@@ -28,9 +28,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install ansible-core
+          pip install community.docker
           pip install docker
 
-      - name: Start Kanidm server
+      - name: Start Kanidm server container
         run: |
           # Create certificates for Kanidm
           mkdir -p /tmp/kanidm-certs
@@ -53,15 +54,32 @@ jobs:
             sleep 2
           done
 
-      - name: Run integration tests
+      - name: Run HTTP API integration tests
         run: |
           # Set environment variables for tests
           export KANIDM_SERVER="https://localhost:8443"
           export KANIDM_ADMIN_PASSWORD="adminpassword"
           export KANIDM_SKIP_TLS="true"
 
-          # Run integration tests
+          # Run integration tests for HTTP API modules
           ansible-test integration --docker ubuntu --python ${{ matrix.python-version }}
+
+      - name: Run binary module integration tests
+        run: |
+          # Install kanidm tools in the container for binary module testing
+          docker exec kanidm apk add --no-cache kanidm-tools
+
+          # Set up inventory for docker connection
+          cat > tests/integration/inventory.docker <<EOF
+          [docker]
+          kanidm ansible_connection=docker
+
+          [docker:vars]
+          ansible_docker_extra_args=--name kanidm
+          EOF
+
+          # Run binary module tests against the container
+          ansible-test integration --docker ubuntu --python ${{ matrix.python-version }} --inventory tests/integration/inventory.docker
 
       - name: Clean up
         if: always()

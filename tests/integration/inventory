@@ -6,3 +6,12 @@ kanidm_skip_tls=true
 
 [test]
 localhost
+
+[docker:vars]
+ansible_docker_extra_args=--name kanidm
+kanidm_server=https://localhost:8443
+kanidm_admin_password=adminpassword
+kanidm_skip_tls=true
+
+[docker]
+kanidm ansible_connection=docker

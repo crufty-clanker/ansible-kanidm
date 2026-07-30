@@ -9,6 +9,7 @@ This directory contains integration tests for the kanidm_community.kanidm collec
 - Docker installed and running
 - Python 3.11+
 - Ansible-core
+- community.docker collection (`ansible-galaxy collection install community.docker`)
 - kanidm Python package (`pip install kanidm`)
 
 ### Setup
@@ -52,6 +53,32 @@ Or run specific tests:
 ansible-test integration --docker ubuntu kanidm_auth
 ```
 
+### Testing Binary Modules with Docker Connection Plugin
+
+The `community.docker.docker` connection plugin allows running Ansible tasks directly inside Docker containers.
+
+To test binary modules (kanidmd_*), use the Docker connection:
+
+```bash
+# Start Kanidm container
+docker run -d \
+  --name kanidm \
+  -v /tmp/kanidm-certs:/data \
+  kanidm/server:latest
+
+# Install kanidm tools in the container
+docker exec kanidm apk add --no-cache kanidm-tools
+
+# Run tests with docker connection
+ansible-playbook -i tests/integration/inventory.docker tests/integration/targets/kanidmd_backup/test.yml
+```
+
+The inventory file (`tests/integration/inventory.docker`) is configured with:
+```
+[docker]
+kanidm ansible_connection=docker
+```
+
 ### Cleanup
 
 ```bash
@@ -64,6 +91,7 @@ rm -rf /tmp/kanidm-certs
 
 Each test target has a `test.yml` file:
 
+### HTTP API Modules (tested against running server)
 - `kanidm_auth` — Authentication module
 - `kanidm_group` — Group management
 - `kanidm_person` — Person accounts
@@ -76,8 +104,23 @@ Each test target has a `test.yml` file:
 - `kanidm_group_members` — Group members filter
 - `kanidm_memberof` — User groups filter
 
+### Binary Modules (tested via Docker connection)
+- `kanidmd_backup` — Database backup
+- `kanidmd_restore` — Database restore
+- `kanidmd_reload` — Config reload
+- `kanidmd_verify` — Database verification
+- `kanidmd_domain` — Domain configuration
+- `kanidmd_healthcheck` — Server health checks
+- `kanidmd_disable_account` — Disable account
+- `kanidmd_recover_account` — Recover account
+- `kanidmd_vacuum` — Database vacuum
+- `kanidmd_reindex` — Database reindex
+- `kanidmd_configtest` — Configuration test
+
 ## Notes
 
 - Integration tests require a running Kanidm server
 - Tests clean up after themselves (delete created resources)
-- Binary modules (kanidmd_*) are not tested here as they require running on the server itself
+- HTTP API modules test against the server via HTTP
+- Binary modules test via `community.docker.docker` connection plugin
+- The Docker connection plugin requires `community.docker` collection
