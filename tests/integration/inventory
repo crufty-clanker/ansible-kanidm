@@ -1,0 +1,8 @@
+[test:vars]
+ansible_connection=local
+kanidm_server=https://localhost:8443
+kanidm_admin_password=adminpassword
+kanidm_skip_tls=true
+
+[test]
+localhost

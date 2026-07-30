@@ -1,0 +1,59 @@
+---
+- name: Test kanidm_group module
+  hosts: test
+  gather_facts: false
+  tasks:
+    - name: Authenticate
+      kanidm_community.kanidm.kanidm_auth:
+        server: "{{ kanidm_server }}"
+        username: "admin"
+        password: "{{ kanidm_admin_password }}"
+        kanidm_verify_tls: "{{ kanidm_skip_tls | bool }}"
+      register: auth_result
+
+    - name: Create test group
+      kanidm_community.kanidm.kanidm_group:
+        server: "{{ kanidm_server }}"
+        session_token: "{{ auth_result.session_token }}"
+        name: "test-group"
+        state: present
+      register: create_result
+
+    - name: Verify group creation
+      ansible.builtin.assert:
+        that:
+          - create_result is successful
+          - create_result.changed | bool
+
+    - name: Add member to group
+      kanidm_community.kanidm.kanidm_group:
+        server: "{{ kanidm_server }}"
+        session_token: "{{ auth_result.session_token }}"
+        name: "test-group"
+        members:
+          - "test-user"
+        state: present
+      register: add_member_result
+
+    - name: Verify member addition
+      ansible.builtin.assert:
+        that:
+          - add_member_result is successful
+          - add_member_result.changed | bool
+
+    - name: Remove group
+      kanidm_community.kanidm.kanidm_group:
+        server: "{{ kanidm_server }}"
+        session_token: "{{ auth_result.session_token }}"
+        name: "test-group"
+        state: absent
+      register: delete_result
+
+    - name: Verify group deletion
+      ansible.builtin.assert:
+        that:
+          - delete_result is successful
+          - delete_result.changed | bool
+
+  tags:
+    - kanidm_group

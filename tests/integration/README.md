@@ -1,0 +1,83 @@
+# Integration Tests
+
+This directory contains integration tests for the kanidm_community.kanidm collection.
+
+## Running Integration Tests Locally
+
+### Prerequisites
+
+- Docker installed and running
+- Python 3.11+
+- Ansible-core
+- kanidm Python package (`pip install kanidm`)
+
+### Setup
+
+1. Start a Kanidm server container:
+
+```bash
+# Create certificates
+mkdir -p /tmp/kanidm-certs
+openssl req -x509 -newkey rsa:2048 -keyout /tmp/kanidm-certs/key.pem -out /tmp/kanidm-certs/chain.pem -days 365 -nodes -subj "/CN=kanidm.test"
+
+# Start container
+docker run -d \
+  --name kanidm \
+  -p 8443:8443 \
+  -v /tmp/kanidm-certs:/data \
+  kanidm/server:latest
+
+# Wait for it to be ready
+sleep 10
+curl -sk https://localhost:8443/health
+```
+
+2. Set environment variables:
+
+```bash
+export KANIDM_SERVER="https://localhost:8443"
+export KANIDM_ADMIN_PASSWORD="adminpassword"
+export KANIDM_SKIP_TLS="true"
+```
+
+3. Run tests:
+
+```bash
+ansible-test integration --docker ubuntu
+```
+
+Or run specific tests:
+
+```bash
+ansible-test integration --docker ubuntu kanidm_auth
+```
+
+### Cleanup
+
+```bash
+docker stop kanidm
+docker rm kanidm
+rm -rf /tmp/kanidm-certs
+```
+
+## Test Targets
+
+Each test target has a `test.yml` file:
+
+- `kanidm_auth` — Authentication module
+- `kanidm_group` — Group management
+- `kanidm_person` — Person accounts
+- `kanidm_service_account` — Service accounts
+- `kanidm_ssh_key` — SSH key management
+- `kanidm_api_token` — API tokens
+- `kanidm_denied_names` — Denied names
+- `kanidm_password_badlist` — Password badlist
+- `kanidm_info` — Lookup plugin
+- `kanidm_group_members` — Group members filter
+- `kanidm_memberof` — User groups filter
+
+## Notes
+
+- Integration tests require a running Kanidm server
+- Tests clean up after themselves (delete created resources)
+- Binary modules (kanidmd_*) are not tested here as they require running on the server itself

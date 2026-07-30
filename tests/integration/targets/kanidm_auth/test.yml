@@ -1,0 +1,36 @@
+---
+- name: Test kanidm_auth module
+  hosts: test
+  gather_facts: false
+  tasks:
+    - name: Authenticate against Kanidm
+      kanidm_community.kanidm.kanidm_auth:
+        server: "{{ kanidm_server }}"
+        username: "admin"
+        password: "{{ kanidm_admin_password }}"
+        kanidm_verify_tls: "{{ kanidm_skip_tls | bool }}"
+      register: auth_result
+
+    - name: Verify authentication result
+      ansible.builtin.assert:
+        that:
+          - auth_result is successful
+          - auth_result.session_token is defined
+          - auth_result.session_token | length > 0
+
+    - name: Use token for subsequent tasks
+      kanidm_community.kanidm.kanidm_group:
+        server: "{{ kanidm_server }}"
+        session_token: "{{ auth_result.session_token }}"
+        name: "test-group"
+        state: present
+      register: group_result
+
+    - name: Verify group creation
+      ansible.builtin.assert:
+        that:
+          - group_result is successful
+          - group_result.changed | bool
+
+  tags:
+    - kanidm_auth

@@ -1,0 +1,71 @@
+---
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ansible-core
+          pip install docker
+
+      - name: Start Kanidm server
+        run: |
+          # Create certificates for Kanidm
+          mkdir -p /tmp/kanidm-certs
+          openssl req -x509 -newkey rsa:2048 -keyout /tmp/kanidm-certs/key.pem -out /tmp/kanidm-certs/chain.pem -days 365 -nodes -subj "/CN=kanidm.test"
+
+          # Start Kanidm container
+          docker run -d \
+            --name kanidm \
+            -p 8443:8443 \
+            -v /tmp/kanidm-certs:/data \
+            kanidm/server:latest
+
+          # Wait for Kanidm to be ready
+          echo "Waiting for Kanidm to be ready..."
+          for i in {1..30}; do
+            if curl -sk https://localhost:8443/health 2>/dev/null | grep -q "ok"; then
+              echo "Kanidm is ready!"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Run integration tests
+        run: |
+          # Set environment variables for tests
+          export KANIDM_SERVER="https://localhost:8443"
+          export KANIDM_ADMIN_PASSWORD="adminpassword"
+          export KANIDM_SKIP_TLS="true"
+
+          # Run integration tests
+          ansible-test integration --docker ubuntu --python ${{ matrix.python-version }}
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker stop kanidm || true
+          docker rm kanidm || true
+          rm -rf /tmp/kanidm-certs
