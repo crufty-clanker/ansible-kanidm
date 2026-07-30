@@ -1,2 +1,30 @@
 ---
-requires_ansible: ">=2.15.0"
+requires_ansible: ">=2.16.0"
+
+action_groups:
+  kanidm:
+    - kanidm_auth
+    - kanidm_group
+    - kanidm_person
+    - kanidm_service_account
+    - kanidm_ssh_key
+    - kanidm_api_token
+    - kanidm_denied_names
+    - kanidm_password_badlist
+  kanidmd:
+    - kanidmd_backup
+    - kanidmd_restore
+    - kanidmd_reload
+    - kanidmd_verify
+    - kanidmd_domain
+    - kanidmd_healthcheck
+    - kanidmd_disable_account
+    - kanidmd_recover_account
+    - kanidmd_vacuum
+    - kanidmd_reindex
+    - kanidmd_configtest
+  kanidm_lookup:
+    - kanidm_info
+  kanidm_filter:
+    - kanidm_group_members
+    - kanidm_memberof
